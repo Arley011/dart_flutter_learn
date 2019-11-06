@@ -1,24 +1,54 @@
+import 'package:expence_planner/widgets/adaptive_flat_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
 
-  NewTransaction(this.addTx);
+  NewTransaction(this.addTx) {
+    print('ConstructorNewTransactionWidget');
+  }
 
   @override
-  _NewTransactionState createState() => _NewTransactionState();
+  _NewTransactionState createState(){
+    print('_NewTransactionState in NewTransactionWidget');
+    return _NewTransactionState();
+  }
 }
+
+
 
 class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   DateTime _selectedDate;
-
-
   final _amountController = TextEditingController();
 
+  _NewTransactionState(){
+    print('Constructor _NewTransactionState');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('initState');
+  }
+
+  @override
+  void didUpdateWidget(NewTransaction oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('dispose');
+  }
+
+
   void _submitData() {
-    if(_amountController.text.isEmpty){
+    if (_amountController.text.isEmpty) {
       return;
     }
     final _enteredTitle = _titleController.text;
@@ -42,71 +72,68 @@ class _NewTransactionState extends State<NewTransaction> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2019),
       lastDate: DateTime.now(),
-    ).then((pickedDate){
-      if(pickedDate == null){
+    ).then((pickedDate) {
+      if (pickedDate == null) {
         return;
       }
       setState(() {
         _selectedDate = pickedDate;
       });
     });
-
-
-
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Назва витрати'),
-              controller: _titleController,
-              onSubmitted: (_) => _submitData(),
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Цiна'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData(),
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(_selectedDate == null ?
-                      'Не Вибрана Дата!'  :
-                      'Вибрана Дата: ${DateFormat.yMd().format(_selectedDate)}',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  FlatButton(
-                    textColor: Theme.of(context).primaryColor,
-                    child: Text(
-                      'Вибрати Дату',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    onPressed: _presentDatePicker,
-                  )
-                ],
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(labelText: 'Назва витрати'),
+                controller: _titleController,
+                onSubmitted: (_) => _submitData(),
               ),
-            ),
-            RaisedButton(
-              child: Text(
-                'Добавити Витрату',
-                style: TextStyle(fontSize: 15),
+              TextField(
+                decoration: InputDecoration(labelText: 'Цiна'),
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _submitData(),
               ),
-              onPressed: _submitData,
-              textColor: Theme.of(context).textTheme.button.color,
-              color: Theme.of(context).primaryColor,
-            )
-          ],
+              Container(
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Не Вибрана Дата!'
+                            : 'Вибрана Дата: ${DateFormat.yMd().format(_selectedDate)}',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    AdaptiveFlatButton('Виберiть дату', _presentDatePicker),
+                  ],
+                ),
+              ),
+              RaisedButton(
+                child: Text(
+                  'Добавити Витрату',
+                  style: TextStyle(fontSize: 15),
+                ),
+                onPressed: _submitData,
+                textColor: Theme.of(context).textTheme.button.color,
+                color: Theme.of(context).primaryColor,
+              )
+            ],
+          ),
         ),
       ),
     );
